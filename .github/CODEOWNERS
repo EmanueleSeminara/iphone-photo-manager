@@ -1,0 +1,7 @@
+# Every change is reviewed by the maintainer.
+*       @EmanueleSeminara
+
+# The two places where a mistake is unrecoverable: the code that talks to the
+# phone, and the script that can empty a destination folder.
+/src/ipm/device/       @EmanueleSeminara
+/scripts/              @EmanueleSeminara

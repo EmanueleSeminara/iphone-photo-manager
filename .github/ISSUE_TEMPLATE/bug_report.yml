@@ -1,0 +1,63 @@
+name: Bug report
+description: Something the app did that it should not have done.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Before you paste anything:** never attach a manifest (`.ipm/manifest.db`), a
+        copy of `Photos.sqlite`, or your device UDID. They describe every photo you own.
+        Redacted excerpts are fine.
+
+        If a photo was deleted from your iPhone when it should not have been, please
+        report it privately instead: see
+        [SECURITY.md](https://github.com/EmanueleSeminara/iphone-photo-manager/blob/main/.github/SECURITY.md).
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what the app did instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: message
+    attributes:
+      label: What the app said
+      description: >
+        Paste `<destination>/.ipm/last-run.log`, or the last few lines of it. That file
+        is written on every run and is safe to share -- it is the activity panel in
+        plain text.
+      render: text
+
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: App version (`ipm --version`), macOS version, iPhone model and iOS version.
+      placeholder: "ipm 1.0.0 · macOS 26.1 · iPhone 13, iOS 26.6.1"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which part
+      options:
+        - Detecting the iPhone
+        - Scanning / the counts shown
+        - Importing
+        - The library check (v)
+        - Deleting from the iPhone
+        - Something else
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: state
+    attributes:
+      label: State
+      options:
+        - label: The iPhone was trusted (say below whether it was locked when it happened)
+        - label: I can reproduce this more than once

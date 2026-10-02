@@ -1,0 +1,9 @@
+blank_issues_enabled: false
+
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/EmanueleSeminara/iphone-photo-manager/security/advisories/new
+    about: Report privately, not as a public issue. See SECURITY.md.
+  - name: Question or idea
+    url: https://github.com/EmanueleSeminara/iphone-photo-manager/discussions
+    about: For anything that is not a bug report or a concrete feature request.

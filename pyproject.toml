@@ -1,0 +1,112 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "iphone-photo-manager"
+# The version is read from src/ipm/__init__.py at build time (see [tool.hatch.version]),
+# so there is exactly one place to bump. Two hand-kept copies is how a package ends up
+# installed as 1.0.1 while `ipm --version` still answers 1.0.0, and a bug report then
+# names the wrong code.
+dynamic = ["version"]
+description = "Persistent terminal app to import photos and videos from an iPhone over USB, then delete them from the device only after they are verified on disk."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+authors = [{ name = "iphone-photo-manager contributors" }]
+keywords = ["iphone", "ios", "afc", "photos", "import", "tui", "usb", "backup"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS :: MacOS X",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Multimedia :: Graphics",
+    "Topic :: System :: Archiving :: Backup",
+]
+dependencies = [
+    # 10.x is the async API this code is written against (create_using_usbmux and
+    # every AfcService method are coroutines); 4.x was synchronous and would fail
+    # at runtime in ways that are hard to diagnose. Verified against 10.7.2.
+    "pymobiledevice3>=10.0,<11",
+    # Measured, not guessed: the whole suite is green on 3.0.0 and fails on 2.1.2,
+    # the last 2.x -- and below 0.86 the app does not import at all, because
+    # `textual.theme`, which the apple-dark theme is built on, did not exist yet.
+    # A floor of 0.80 therefore promised five releases that never worked.
+    #
+    # The ceiling follows the same reasoning as pymobiledevice3 below: this is a
+    # terminal application whose users are not going to debug a resolver, and the
+    # 2.x -> 3.x boundary already broke it once. Dependabot will offer 9.x when it
+    # lands, CI will say whether it works, and raising this is then a deliberate act.
+    "textual>=3.0,<9",
+    # Deletion goes through the phone's own photo library rather than the file
+    # system, because removing a file over AFC leaves its library row behind. That
+    # is macOS-only, which this application already is.
+    "pyobjc-framework-ImageCaptureCore>=10.0; sys_platform == 'darwin'",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "mypy>=1.10",
+    "ruff>=0.5",
+    "textual-dev>=1.5",
+]
+
+[project.urls]
+Homepage = "https://github.com/EmanueleSeminara/iphone-photo-manager"
+Repository = "https://github.com/EmanueleSeminara/iphone-photo-manager"
+Issues = "https://github.com/EmanueleSeminara/iphone-photo-manager/issues"
+Changelog = "https://github.com/EmanueleSeminara/iphone-photo-manager/blob/main/CHANGELOG.md"
+
+[project.scripts]
+ipm = "ipm.cli:main"
+
+[tool.hatch.version]
+path = "src/ipm/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ipm"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/ipm", "tests", "README.md", "CHANGELOG.md", "MANUAL_TESTING.md", "LICENSE"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+filterwarnings = ["ignore::DeprecationWarning"]
+# The hardware suite is excluded unless it is asked for by name. A distracted
+# `pytest` must never go looking for the phone on the maintainer's desk.
+addopts = '-m "not hardware"'
+markers = [
+    "hardware: needs a real iPhone attached; run with -m hardware (see tests/hardware/README.md)",
+]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+
+[tool.ruff.lint]
+# "S" is bandit: this application talks to a device full of personal data and can
+# delete from it, so the security lints are part of the normal check.
+select = ["E", "F", "I", "UP", "B", "SIM", "S"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101"]  # assert is what a test is made of
+
+[tool.mypy]
+python_version = "3.11"
+packages = ["ipm"]
+mypy_path = "src"
+strict = true
+warn_unused_ignores = false
+# pymobiledevice3 ships no complete type stubs, and the Objective-C bridge is typed
+# dynamically by construction.
+[[tool.mypy.overrides]]
+module = ["pymobiledevice3.*", "Foundation", "ImageCaptureCore"]
+ignore_missing_imports = true

@@ -1,0 +1,25 @@
+name: Feature request
+description: Something the app should be able to do.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This tool does three things on purpose: it shows what is plugged in, it copies
+        everything losslessly, and it deletes — separately — only what it has verified.
+        Requests that make deletion easier, faster or automatic will be declined; that
+        friction is the feature.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What you are trying to do
+      description: The situation, not the solution. What are you unable to do today?
+    validations:
+      required: true
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: What you have in mind
+      description: Optional. If you already have a shape for it, describe it here.

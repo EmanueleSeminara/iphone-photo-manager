@@ -1,0 +1,80 @@
+name: CI
+
+# Pull requests are checked as well as pushes: a required status check that only
+# runs on push never reports on a PR, which leaves the PR blocked for ever.
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+
+# Least privilege. Nothing here writes to the repository.
+permissions:
+  contents: read
+
+# Third-party actions below are pinned to a full commit SHA, not a tag: a tag can
+# be moved, and moving one is how supply-chain attacks on Actions have worked. The
+# trailing comment records which version each SHA was, so Dependabot can bump them.
+
+jobs:
+  # The platform the application actually runs on. Job names are unique across
+  # every workflow, because a duplicate name makes a required check ambiguous.
+  macos:
+    name: macOS · Python ${{ matrix.python-version }}
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          enable-cache: true
+
+      # A virtual environment, exactly as CONTRIBUTING.md sets one up locally. uv
+      # refuses to install into a bare interpreter ("No virtual environment found"),
+      # which is how the first run of this workflow failed in nine seconds.
+      - name: Set up Python ${{ matrix.python-version }}
+        run: uv venv --python ${{ matrix.python-version }}
+
+      - name: Install the project
+        run: uv pip install -e ".[dev]"
+
+      - name: Lint
+        run: .venv/bin/ruff check src tests
+
+      - name: Type-check
+        run: .venv/bin/python -m mypy
+
+      # No iPhone here, by design. Everything that talks to real hardware is
+      # exercised by hand against a phone, following MANUAL_TESTING.md; what CI
+      # can prove is that no code outside ipm/device tries to (tests/test_readonly.py).
+      - name: Test
+        run: .venv/bin/python -m pytest -q
+
+  # ipm.core is meant to be platform-neutral: it depends on a Protocol, never on
+  # pymobiledevice3 or on the Objective-C bridge. Running the suite on Linux is
+  # the cheapest way to notice the day that stops being true.
+  linux:
+    name: Linux · core stays portable
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv venv --python 3.13
+
+      - name: Install the project
+        run: uv pip install -e ".[dev]"
+
+      - name: Test
+        run: .venv/bin/python -m pytest -q

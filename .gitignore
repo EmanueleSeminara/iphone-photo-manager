@@ -1,0 +1,85 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Builds / packaging
+build/
+dist/
+sdist/
+wheels/
+*.egg-info/
+*.egg
+.eggs/
+pip-wheel-metadata/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+.python-version
+
+# Test / type / lint caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+
+# --- Project runtime artifacts ---
+# SQLite import manifests written by the tool (normally inside the
+# destination folder, but never commit one if it lands in the repo).
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+*.sqlite-wal
+*.sqlite-shm
+# Copies of a device's Photos database, if a debugging session ever drops one here.
+# They hold the metadata of every photo on the phone and must never be committed.
+Photos.sqlite*
+dcim.json
+.ipm/
+*.ipm-part
+
+# Logs
+*.log
+logs/
+
+# --- macOS ---
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# --- Editors / IDEs ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# --- Claude Code working files (local only, never published) ---
+CLAUDE.md
+CLAUDE.local.md
+**/CLAUDE.md
+.claude/
+.claude*/
+
+# --- Hardware test configuration (machine-specific, never published) ---
+# Holds the UDID of the phone the hardware suite is allowed to talk to, the
+# destination it may use, and the list of items it may delete. See
+# MANUAL_TESTING.md. The .example file next to it IS versioned.
+.ipm-hw.env
+tests/hardware/sacrificial.txt
+.check-logs/

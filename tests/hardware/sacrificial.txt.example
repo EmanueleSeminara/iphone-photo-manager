@@ -1,0 +1,36 @@
+# Photos you are willing to lose -- and lose means lose: the photo service removes
+# items outright, they do NOT go to Recently Deleted. The copy in your destination
+# folder is the only one that will be left.
+#
+# One entry per line. Copy this file to sacrificial.txt, which is git-ignored.
+#
+# THE EASY WAY -- the local path, exactly as you see it in the Finder, relative to
+# your destination folder:
+#
+#   2026/09/IMG_7045.JPG
+#
+# It is unique inside a destination, and you can check it with your own eyes before
+# committing a photo to deletion. That is the point.
+#
+# Also accepted:
+#
+#   /DCIM/117APPLE/IMG_7045.JPG    the device path -- exact, but you have to look it up
+#   IMG_7045.JPG                   a bare name, only when it is unambiguous
+#
+# Bare names are a convenience with a trap: file names on an iPhone are NOT unique.
+# iOS numbers photos per folder and starts again in the next one, so IMG_7045.JPG
+# can be a photo from last year *and* the throwaway you took a minute ago. If a name
+# matches two imported files the run stops and prints both rather than guessing.
+#
+# Naming a file selects the whole *item* it belongs to: the still, its Live Photo
+# half and its .AAE sidecar go together, because that is what iOS deletes. At most
+# three items per run, and that ceiling is in the code, not here.
+#
+# Nothing outside this list can be deleted by the test suite. There is no
+# "most recent N" here and no default -- if this file is missing or empty, the
+# destructive test skips.
+#
+# Make the photo on purpose (MANUAL_TESTING.md check 16b): Camera with Live Photos
+# on, one throwaway shot, then edit it in Photos so it gets a sidecar too.
+
+# 2026/09/IMG_7045.JPG
