@@ -30,8 +30,14 @@ classifiers = [
 dependencies = [
     # 10.x is the async API this code is written against (create_using_usbmux and
     # every AfcService method are coroutines); 4.x was synchronous and would fail
-    # at runtime in ways that are hard to diagnose. Verified against 10.7.2.
-    "pymobiledevice3>=10.0,<11",
+    # at runtime in ways that are hard to diagnose.
+    #
+    # Pinned exactly, because 10.7.2 is the only version this application has run
+    # against a real iPhone: every import, scan and deletion behind 1.0.0 used it.
+    # A range let a fresh install resolve 10.11.5, which CI accepts but no phone
+    # has seen. Dependabot proposes newer releases; raising the pin needs the
+    # hardware suite run with a phone attached, not just a green CI.
+    "pymobiledevice3==10.7.2",
     # Measured, not guessed: the whole suite is green on 3.0.0 and fails on 2.1.2,
     # the last 2.x -- and below 0.86 the app does not import at all, because
     # `textual.theme`, which the apple-dark theme is built on, did not exist yet.
